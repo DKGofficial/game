@@ -60,6 +60,27 @@
     }
   }
 
+  function checkSolution() {
+    const inputs = document.querySelectorAll('.sudoku-cell input');
+    let isComplete = true;
+
+    inputs.forEach(input => {
+      if (input.value === '' || input.value < 1 || input.value > 9) {
+        isComplete = false;
+      }
+    });
+
+    if (isComplete) {
+      alert('Congratulations! You have completed the puzzle.');
+    } else {
+      alert('There are still some empty or incorrect cells.');
+    }
+  }
+
+  document.getElementById('check-solution').addEventListener('click', checkSolution);
+
   // Load initial game
   loadGame();
 </script>
+
+<button id="check-solution">Check Solution</button>
