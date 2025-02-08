@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Simulator SPA</title>
+  <title>Bike Racing Game Simulator</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     body {
@@ -21,29 +21,23 @@
       margin-bottom: 20px;
     }
 
-    .game-list, .game-screen {
+    .game-screen, .leaderboard {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 20px;
     }
 
-    .card {
-      background-color: #2d3748;
-      padding: 20px;
-      border-radius: 12px;
-      width: 250px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .card h2 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      margin-bottom: 15px;
+    .bike {
+      width: 100px;
+      height: 50px;
+      border-radius: 10px;
+      margin: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      font-weight: bold;
     }
 
     .button {
@@ -67,48 +61,117 @@
     .exit-button:hover {
       background-color: #c53030;
     }
+
+    .turbo {
+      background-color: #f6ad55;
+      color: black;
+      padding: 5px 15px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+
+    .leaderboard {
+      background-color: #2d3748;
+      padding: 20px;
+      border-radius: 12px;
+      width: 300px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .leaderboard h3 {
+      margin-bottom: 10px;
+    }
+
+    .leaderboard ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .leaderboard li {
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
-  <h1>Game Simulator</h1>
-  <div id="app" class="game-list"></div>
+  <h1>Bike Racing Game Simulator</h1>
+  <div id="app" class="game-screen"></div>
 
   <script>
-    const games = [
-      { id: 1, name: 'Space Invaders', description: 'Defend the Earth from alien invaders!' },
-      { id: 2, name: 'Racing Fever', description: 'Speed through the tracks and beat your opponents!' },
-      { id: 3, name: 'Puzzle Master', description: 'Solve challenging puzzles to win!' }
+    const teams = [
+      { id: 1, name: 'Team Thunder', color: '#ff4c4c', bikes: 3 },
+      { id: 2, name: 'Speed Demons', color: '#4cff4c', bikes: 4 },
+      { id: 3, name: 'Turbo Titans', color: '#4c4cff', bikes: 5 }
     ];
 
+    const leaderboard = [];
     const app = document.getElementById('app');
 
-    function renderGameList() {
+    function renderTeams() {
       app.innerHTML = '';
-      games.forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h2>${game.name}</h2>
-          <p>${game.description}</p>
-          <button class="button" onclick="startGame(${game.id})">Start Game</button>
+      teams.forEach(team => {
+        const teamDiv = document.createElement('div');
+        teamDiv.className = 'card';
+        teamDiv.innerHTML = `
+          <h2>${team.name}</h2>
+          <div>${renderBikes(team)}</div>
+          <button class="button" onclick="startRace(${team.id})">Start Race</button>
         `;
-        app.appendChild(card);
+        app.appendChild(teamDiv);
       });
     }
 
-    function startGame(gameId) {
-      const game = games.find(g => g.id === gameId);
+    function renderBikes(team) {
+      let bikesHTML = '';
+      for (let i = 0; i < team.bikes; i++) {
+        bikesHTML += `<div class="bike" style="background-color: ${team.color};">Bike ${i + 1}</div>`;
+      }
+      return bikesHTML;
+    }
+
+    function startRace(teamId) {
+      const team = teams.find(t => t.id === teamId);
+      const raceTime = Math.floor(Math.random() * 5000) + 3000;
       app.innerHTML = `
         <div class="card game-screen">
-          <h2>${game.name}</h2>
-          <p>${game.description}</p>
-          <button class="button exit-button" onclick="renderGameList()">Exit Game</button>
+          <h2>${team.name} is Racing!</h2>
+          <p>Race in progress...</p>
+          <div>${renderBikes(team)}</div>
+          <button class="button turbo" onclick="activateTurbo(${team.id})">Activate Turbo</button>
+        </div>
+      `;
+      setTimeout(() => finishRace(team), raceTime);
+    }
+
+    function activateTurbo(teamId) {
+      const team = teams.find(t => t.id === teamId);
+      alert(`${team.name} activated Turbo Mode! Speed increased!`);
+    }
+
+    function finishRace(team) {
+      leaderboard.push(team.name);
+      app.innerHTML = `
+        <div class="card game-screen">
+          <h2>${team.name} Finished the Race!</h2>
+          <button class="button" onclick="renderTeams()">Race Again</button>
+          <button class="button exit-button" onclick="renderLeaderboard()">View Leaderboard</button>
+        </div>
+      `;
+    }
+
+    function renderLeaderboard() {
+      app.innerHTML = `
+        <div class="leaderboard">
+          <h3>Leaderboard</h3>
+          <ul>
+            ${leaderboard.map((team, index) => `<li>${index + 1}. ${team}</li>`).join('')}
+          </ul>
+          <button class="button exit-button" onclick="renderTeams()">Back to Teams</button>
         </div>
       `;
     }
 
     // Initial render
-    renderGameList();
+    renderTeams();
   </script>
 </body>
 </html>
