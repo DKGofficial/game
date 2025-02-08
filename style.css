@@ -1,61 +1,173 @@
-body {
-  background-color: #1a202c;
-  color: white;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
+<style>
+  body {
+    background-color: #f4f7fa;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-}
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
 
-.game-list, .game-screen {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
+  #difficulty {
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
 
-.card {
-  background-color: #2d3748;
-  padding: 20px;
-  border-radius: 12px;
-  width: 250px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+  .sudoku-board {
+    display: grid;
+    grid-template-columns: repeat(9, 40px);
+    gap: 2px;
+    margin-bottom: 20px;
+  }
 
-.card h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
+  .sudoku-cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 1.2rem;
+  }
 
-.card p {
-  margin-bottom: 15px;
-}
+  .sudoku-cell:nth-child(3n) {
+    border-right: 2px solid #000;
+  }
 
-.button {
-  background-color: #3182ce;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-}
+  .sudoku-cell:nth-child(n+19):nth-child(-n+27),
+  .sudoku-cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid #000;
+  }
 
-.button:hover {
-  background-color: #2b6cb0;
-}
+  .sudoku-cell input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    text-align: center;
+    font-size: 1.2rem;
+    background: transparent;
+  }
 
-.exit-button {
-  background-color: #e53e3e;
-}
+  #check-solution {
+    background-color: #2980b9;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
 
-.exit-button:hover {
-  background-color: #c53030;
-}
+  #check-solution:hover {
+    background-color: #1c5980;
+  }
+</style>
+
+<script>
+  const sudokuBoards = {
+    'Junior': [
+      [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9]
+      ]
+    ],
+    'Mid-term': [/* Array of 100 medium Sudoku boards */],
+    'Senior': [/* Array of 100 hard Sudoku boards */],
+    'Master': [/* Array of 100 very hard Sudoku boards */],
+    'Grand Master': [/* Array of 100 expert Sudoku boards */]
+  };
+
+  function loadGame() {
+    const difficulty = document.getElementById('difficulty').value;
+    const board = getRandomBoard(sudokuBoards[difficulty]);
+    renderBoard(board);
+  }
+
+  function getRandomBoard(boards) {
+    const randomIndex = Math.floor(Math.random() * boards.length);
+    return boards[randomIndex];
+  }
+
+  function renderBoard(board) {
+    const app = document.getElementById('app');
+    app.innerHTML = '<div class="sudoku-board"></div>';
+    const sudokuBoard = app.querySelector('.sudoku-board');
+
+    board.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const cellElement = document.createElement('div');
+        cellElement.className = 'sudoku-cell';
+        if (cell !== 0) {
+          cellElement.textContent = cell;
+        } else {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.min = 1;
+          input.max = 9;
+          input.oninput = () => validateInput(input);
+          cellElement.appendChild(input);
+        }
+        sudokuBoard.appendChild(cellElement);
+      });
+    });
+  }
+
+  function validateInput(input) {
+    if (input.value < 1 || input.value > 9) {
+      input.value = '';
+    }
+  }
+
+  function checkSolution() {
+    const inputs = document.querySelectorAll('.sudoku-cell input');
+    let isComplete = true;
+
+    inputs.forEach(input => {
+      if (input.value === '' || input.value < 1 || input.value > 9) {
+        isComplete = false;
+      }
+    });
+
+    if (isComplete) {
+      alert('Congratulations! You have completed the puzzle.');
+    } else {
+      alert('There are still some empty or incorrect cells.');
+    }
+  }
+
+  document.getElementById('check-solution').addEventListener('click', checkSolution);
+
+  // Load initial game
+  loadGame();
+</script>
+
+<h1>Sudoku Game Simulator</h1>
+<select id="difficulty" onchange="loadGame()">
+  <option value="Junior">Junior</option>
+  <option value="Mid-term">Mid-term</option>
+  <option value="Senior">Senior</option>
+  <option value="Master">Master</option>
+  <option value="Grand Master">Grand Master</option>
+</select>
+<div id="app"></div>
+<button id="check-solution">Check Solution</button>
