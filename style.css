@@ -63,7 +63,7 @@
     background: transparent;
   }
 
-  #check-solution {
+  #check-solution, #play-game {
     background-color: #27ae60;
     color: white;
     padding: 12px 24px;
@@ -72,9 +72,10 @@
     cursor: pointer;
     font-size: 1.2rem;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    margin: 10px;
   }
 
-  #check-solution:hover {
+  #check-solution:hover, #play-game:hover {
     background-color: #1e8449;
   }
 
@@ -98,6 +99,7 @@
   <option value="Grand Master">Grand Master</option>
 </select>
 <div id="app"></div>
+<button id="play-game">Play Game</button>
 <button id="check-solution">Check Solution</button>
 
 <script>
@@ -190,6 +192,7 @@
 
     document.getElementById('difficulty').addEventListener('change', loadGame);
     document.getElementById('check-solution').addEventListener('click', checkSolution);
+    document.getElementById('play-game').addEventListener('click', loadGame);
 
     // Load initial game
     loadGame();
