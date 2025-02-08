@@ -1,35 +1,65 @@
-const games = [
-  { id: 1, name: 'Space Invaders', description: 'Defend the Earth from alien invaders!' },
-  { id: 2, name: 'Racing Fever', description: 'Speed through the tracks and beat your opponents!' },
-  { id: 3, name: 'Puzzle Master', description: 'Solve challenging puzzles to win!' }
-];
+<script>
+  const sudokuBoards = {
+    'Junior': [
+      [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9]
+      ]
+    ],
+    'Mid-term': [/* Array of 100 medium Sudoku boards */],
+    'Senior': [/* Array of 100 hard Sudoku boards */],
+    'Master': [/* Array of 100 very hard Sudoku boards */],
+    'Grand Master': [/* Array of 100 expert Sudoku boards */]
+  };
 
-const app = document.getElementById('app');
+  function loadGame() {
+    const difficulty = document.getElementById('difficulty').value;
+    const board = getRandomBoard(sudokuBoards[difficulty]);
+    renderBoard(board);
+  }
 
-function renderGameList() {
-  app.innerHTML = '';
-  games.forEach(game => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <h2>${game.name}</h2>
-      <p>${game.description}</p>
-      <button class="button" onclick="startGame(${game.id})">Start Game</button>
-    `;
-    app.appendChild(card);
-  });
-}
+  function getRandomBoard(boards) {
+    const randomIndex = Math.floor(Math.random() * boards.length);
+    return boards[randomIndex];
+  }
 
-function startGame(gameId) {
-  const game = games.find(g => g.id === gameId);
-  app.innerHTML = `
-    <div class="card game-screen">
-      <h2>${game.name}</h2>
-      <p>${game.description}</p>
-      <button class="button exit-button" onclick="renderGameList()">Exit Game</button>
-    </div>
-  `;
-}
+  function renderBoard(board) {
+    const app = document.getElementById('app');
+    app.innerHTML = '<div class="sudoku-board"></div>';
+    const sudokuBoard = app.querySelector('.sudoku-board');
 
-// Initial render
-renderGameList();
+    board.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const cellElement = document.createElement('div');
+        cellElement.className = 'sudoku-cell';
+        if (cell !== 0) {
+          cellElement.textContent = cell;
+        } else {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.min = 1;
+          input.max = 9;
+          input.oninput = () => validateInput(input);
+          cellElement.appendChild(input);
+        }
+        sudokuBoard.appendChild(cellElement);
+      });
+    });
+  }
+
+  function validateInput(input) {
+    if (input.value < 1 || input.value > 9) {
+      input.value = '';
+    }
+  }
+
+  // Load initial game
+  loadGame();
+</script>
