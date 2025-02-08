@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Simulator SPA</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
     body {
       background-color: #1a202c;
@@ -14,16 +15,19 @@
       align-items: center;
       padding: 20px;
     }
+
     h1 {
       font-size: 2.5rem;
       margin-bottom: 20px;
     }
+
     .game-list, .game-screen {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
     }
+
     .card {
       background-color: #2d3748;
       padding: 20px;
@@ -32,13 +36,16 @@
       text-align: center;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
     .card h2 {
       font-size: 1.5rem;
       margin-bottom: 10px;
     }
+
     .card p {
       margin-bottom: 15px;
     }
+
     .button {
       background-color: #3182ce;
       color: white;
@@ -48,12 +55,15 @@
       cursor: pointer;
       font-size: 1rem;
     }
+
     .button:hover {
       background-color: #2b6cb0;
     }
+
     .exit-button {
       background-color: #e53e3e;
     }
+
     .exit-button:hover {
       background-color: #c53030;
     }
@@ -63,7 +73,7 @@
   <h1>Game Simulator</h1>
   <div id="app" class="game-list"></div>
 
-  <script src="app.js"></script>
+  <script>
     const games = [
       { id: 1, name: 'Space Invaders', description: 'Defend the Earth from alien invaders!' },
       { id: 2, name: 'Racing Fever', description: 'Speed through the tracks and beat your opponents!' },
